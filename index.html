@@ -1,3 +1,4 @@
+<!-- SME-v2026-07-07 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -17,7 +18,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .nav{display:flex;gap:6px;padding:10px 24px;background:#fff;border-bottom:2px solid var(--gp);flex-wrap:wrap}
 .nb{padding:8px 18px;border-radius:20px;border:none;cursor:pointer;font-size:13.5px;font-family:'DM Sans',sans-serif;font-weight:500;background:transparent;color:var(--ts);transition:all .2s}
 .nb.active{background:var(--g);color:#fff;font-weight:700}.nb:hover:not(.active){background:var(--gp);color:var(--g)}
-.main{padding:22px 24px;max-width:1140px;margin:0 auto}
+.main{padding:22px 24px;max-width:1140px;margin:0 auto;min-height:calc(100vh - 120px)}
 .card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 1px 8px rgba(0,0,0,.08);margin-bottom:14px}
 .btn{padding:9px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .18s;white-space:nowrap}
 .bp{background:var(--g);color:#fff}.bp:hover{background:var(--gd)}
@@ -105,7 +106,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .sig-item input{flex:1;padding:6px 10px;border-radius:6px;border:1px solid #ddd;font-size:13px;font-family:'DM Sans',sans-serif}
 .sig-item .sig-drag{cursor:grab;color:#ccc;font-size:18px;flex-shrink:0}
 /* PORTRAIT CERT */
-.cert-portrait{width:100%;aspect-ratio:1.414;background-color:#fff;background-size:cover;background-position:center;border-radius:8px;font-family:'Lora',Georgia,serif;position:relative;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.1);margin-bottom:10px;display:flex;flex-direction:column;padding:0}
+.cert-portrait{width:297mm;aspect-ratio:1.414;background-color:#fff;background-size:cover;background-position:center;border-radius:8px;font-family:'Lora',Georgia,serif;position:relative;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.1);margin-bottom:10px;display:flex;flex-direction:column;padding:0}
 .cert-portrait-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
 .cert-portrait-bg-overlay{position:absolute;inset:0;background:rgba(255,255,255,0);z-index:1;pointer-events:none}
 .cert-portrait-content{position:relative;z-index:2;display:flex;flex-direction:column;height:100%;text-align:center}
@@ -145,7 +146,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
   <button class="nb" onclick="setTab('layout')" id="tab-layout">&#127912; Personalizar</button>
   <button class="nb" onclick="setTab('signers')" id="tab-signers">&#9997;&#65039; Assinantes</button>
   <button class="nb" onclick="setTab('users')" id="tab-users" style="display:none">&#128101; Usuários</button>
-  <button class="nb" onclick="setTab('config')" id="tab-config" style="margin-left:auto">&#9881;&#65039; Configurações</button>
+  <button class="nb" onclick="setTab('config')" id="tab-config" style="margin-left:auto;display:none">&#9881;&#65039; Configurações</button>
 </div>
 <div class="main">
   <div id="pg-events">
@@ -192,71 +193,54 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
       <div style="display:flex;gap:8px">
         <button class="btn bs" onclick="resetLayout()">&#8634; Restaurar padrão</button>
         <button class="btn bp" onclick="saveLayout()">&#128190; Salvar</button>
-      </div></div>
-    <div style="display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;margin-top:16px">
       <div>
         <div class="card pnl-section">
           <h4>&#128444;&#65039; Logos</h4>
-          <div class="fg">
-            <label class="lbl">Logo da Prefeitura <span style="font-weight:400;color:#aaa">(aparece à esquerda da SME)</span></label>
-            <div class="logo-box" id="prev-pref"><span style="font-size:11px;color:#bbb">Nenhuma logo carregada</span></div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <label class="btn bs btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="uploadLogo('pref',this)">&#128228; Carregar</label>
-              <button class="btn bg_ btn-sm" onclick="removeLogo('pref')">&#128465; Remover</button>
+          <div class="fg"><label class="lbl">Logo Prefeitura</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div id="prev-logo-pref" style="width:52px;height:52px;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;overflow:hidden"><span style="font-size:10px;color:#aaa">Padrão</span></div>
+              <label class="btn bs btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="uploadLogo('logoPrefeitura',this)">&#128228; Carregar</label>
+              <button class="btn bg_ btn-sm" onclick="removeLogo('logoPrefeitura')">&#128465;</button>
             </div>
-            <div style="font-size:11px;color:#aaa;margin-top:4px">PNG/JPG/SVG. Fundo transparente recomendado.</div>
           </div>
-          <div class="fg">
-            <label class="lbl">Logo da Secretaria Municipal de Educação</label>
-            <div class="logo-box" id="prev-sme"><span style="font-size:11px;color:#bbb">Nenhuma logo carregada</span></div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <label class="btn bs btn-sm" style="cursor:pointer"><input type="file" id="upload-sme" accept="image/*" style="display:none" onchange="uploadLogo('sme',this)">&#128228; Carregar</label>
-              <button class="btn bg_ btn-sm" onclick="removeLogo('sme')">&#128465; Remover</button>
+          <div class="fg"><label class="lbl">Logo SME</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div id="prev-logo-sme" style="width:52px;height:52px;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;overflow:hidden"><span style="font-size:10px;color:#aaa">Padrão</span></div>
+              <label class="btn bs btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="uploadLogo('logoSME',this)">&#128228; Carregar</label>
+              <button class="btn bg_ btn-sm" onclick="removeLogo('logoSME')">&#128465;</button>
             </div>
-            <div style="font-size:11px;color:#aaa;margin-top:4px">PNG/JPG/SVG. Fundo transparente recomendado.</div>
           </div>
-          <div class="fg">
-            <label class="lbl">Logo padrão de Formação <span style="font-weight:400;color:#aaa">(cada evento pode ter a sua)</span></label>
-            <div class="logo-box" id="prev-formacao" style="height:60px;border-radius:50%;width:60px"><span style="font-size:9px;color:#bbb;text-align:center">Sem logo</span></div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <label class="btn bs btn-sm" style="cursor:pointer"><input type="file" id="upload-formacao" accept="image/*" style="display:none" onchange="uploadLogo('formacao',this)">&#128228; Carregar</label>
-              <button class="btn bg_ btn-sm" onclick="removeLogo('formacao')">&#128465; Remover</button>
+          <div class="fg"><label class="lbl">Logo da Formação (padrão)</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div id="prev-logo-form" style="width:52px;height:52px;border-radius:8px;background:#eee;display:flex;align-items:center;justify-content:center;overflow:hidden"><span style="font-size:10px;color:#aaa">Padrão</span></div>
+              <label class="btn bs btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="uploadLogo('logoFormacao',this)">&#128228; Carregar</label>
+              <button class="btn bg_ btn-sm" onclick="removeLogo('logoFormacao')">&#128465;</button>
             </div>
           </div>
         </div>
         <div class="card pnl-section">
           <h4>&#127912; Cores</h4>
-          <div class="color-row"><label>Cor principal</label><input type="color" id="lc-primary" oninput="applyLayout()"></div>
-          <div class="color-row"><label>Cor escura</label><input type="color" id="lc-dark" oninput="applyLayout()"></div>
-          <div class="color-row"><label>Nome do professor</label><input type="color" id="lc-name" oninput="applyLayout()"></div>
-          <div class="color-row"><label>Barra (cor 1 e cor 2)</label><input type="color" id="lc-bar1" oninput="applyLayout()"><input type="color" id="lc-bar2" oninput="applyLayout()"></div>
-        </div>
-        <div class="card pnl-section">
-          <h4>&#128221; Textos do Cabeçalho <span style="font-weight:400;font-size:11px;color:#aaa">(usado quando não há logo)</span></h4>
-          <div class="fg"><label class="lbl">Linha 1</label><input class="inp" id="lt-line1" oninput="applyLayout()" placeholder="SECRETARIA MUNICIPAL"></div>
-          <div class="fg"><label class="lbl">Linha 2</label><input class="inp" id="lt-line2" oninput="applyLayout()" placeholder="DE EDUCAÇÃO"></div>
-          <div class="fg"><label class="lbl">Selo circular — linha 1 <span style="font-weight:400;color:#aaa;font-size:11px">(só certs. de professor)</span></label><input class="inp" id="lt-badge1" oninput="applyLayout()" placeholder="FORMAÇÃO"></div>
-          <div class="fg"><label class="lbl">Selo circular — linha 2</label><input class="inp" id="lt-badge2" oninput="applyLayout()" placeholder="CONTÍNUA"></div>
-          <div class="fg"><label class="lbl">Ano no selo</label><input class="inp" id="lt-year" oninput="applyLayout()" placeholder="2025"></div>
-        </div>
-        <div class="card pnl-section">
-          <h4>&#128196; Texto do Certificado</h4>
-          <div class="fg"><label class="lbl">📋 Textos do certificado de <b>Professores</b></label></div><div class="fg"><label class="lbl">Frase introdutória</label><input class="inp" id="lt-intro" oninput="applyLayout()"></div>
-          <div class="fg"><label class="lbl">Frase antes do evento</label><input class="inp" id="lt-before-event" oninput="applyLayout()"></div>
-          <div class="fg"><label class="lbl">Texto do período <span style="color:#aaa;font-weight:400">({cidade} e {horas} são substituídos)</span></label><input class="inp" id="lt-period-suffix" oninput="applyLayout()"></div>
-          <div class="fg"><label class="lbl">URL de validação (QR Code)</label><input class="inp" id="lt-url" oninput="applyLayout()"></div>
-          <div class="fg" style="margin-top:12px;padding-top:12px;border-top:1px solid #eee">
-            <label class="lbl">📝 Texto do certificado de <b>Alunos</b> (Ed. Infantil / 9º ano)</label>
-            <textarea class="inp" id="lt-cert-text-aluno" rows="3" style="resize:vertical;font-size:13px" oninput="applyLayout()" placeholder="Ex: concluiu a Educação Infantil...">concluiu a Educação Infantil, podendo ingressar no Ensino Fundamental.</textarea>
-            <div style="font-size:11px;color:#aaa;margin-top:4px">Use <b>{aluno}</b> para inserir o nome no texto.</div>
+          <div class="g2">
+            <div class="fg"><label class="lbl">Cor primária</label><input type="color" class="inp" id="lt-bar1" oninput="applyLayout()"></div>
+            <div class="fg"><label class="lbl">Cor escura</label><input type="color" class="inp" id="lt-bar2" oninput="applyLayout()"></div>
+            <div class="fg"><label class="lbl">Cor do nome</label><input type="color" class="inp" id="lt-nameColor" oninput="applyLayout()"></div>
+            <div class="fg"><label class="lbl">Cor barras</label><input type="color" class="inp" id="lt-barColor" oninput="applyLayout()"></div>
           </div>
-
         </div>
         <div class="card pnl-section">
           <h4>&#128208; Tamanhos</h4>
-          <div class="range-row"><label>Título "Certificado"</label><input type="range" id="ls-title" min="1.4" max="3" step="0.1" oninput="applyLayout();document.getElementById('ls-tv').textContent=this.value+'em'"><span id="ls-tv">2em</span></div>
-          <div class="range-row"><label>Nome do professor</label><input type="range" id="ls-name" min="0.8" max="1.8" step="0.05" oninput="applyLayout();document.getElementById('ls-nv').textContent=this.value+'em'"><span id="ls-nv">1.05em</span></div>
-          <div class="range-row"><label>Texto do corpo</label><input type="range" id="ls-body" min="0.5" max="1" step="0.02" oninput="applyLayout();document.getElementById('ls-bv').textContent=this.value+'em'"><span id="ls-bv">0.68em</span></div>
+          <div class="fg"><label class="lbl">Tamanho do corpo <span id="ls-bs-val"></span></label>
+            <input type="range" id="lt-bodySize" min="0.7" max="1.3" step="0.05" oninput="document.getElementById('ls-bs-val').textContent=this.value;applyLayout()">
+          </div>
+          <div class="fg"><label class="lbl">Espaçamento de linha <span id="ls-lh-val"></span></label>
+            <input type="range" id="lt-lineHeight" min="1.2" max="2.5" step="0.05" oninput="document.getElementById('ls-lh-val').textContent=this.value;applyLayout()">
+          </div>
+          <div class="fg"><label class="lbl">Espaçamento de letras <span id="ls-ls-val"></span></label>
+            <input type="range" id="lt-letterSpacing" min="0" max="5" step="0.5" oninput="document.getElementById('ls-ls-val').textContent=this.value;applyLayout()">
+          </div>
         </div>
         <div class="card pnl-section">
           <h4>&#128444;&#65039; Fundo / Borda Padrão</h4>
@@ -270,24 +254,46 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
             </label>
             <button class="btn bg_" onclick="removeGlobalBg()" style="margin-left:6px">&#128465; Remover</button>
           </div>
-          <div style="font-size:11px;color:#aaa">JPG = fundo completo &nbsp;|&nbsp; PNG transparente = só a borda por cima. Cada formação pode ter a sua própria que substitui esta.</div>
-
+          <div style="font-size:11px;color:#aaa">JPG = fundo completo &nbsp;|&nbsp; PNG transparente = só a borda.</div>
+        </div>
+        <div class="card pnl-section">
+          <h4>&#128221; Textos do Cabeçalho <span style="font-weight:400;font-size:11px;color:var(--ts)">(aparece no topo do certificado)</span></h4>
+          <div class="fg"><label class="lbl">Linha 1</label><input class="inp" id="lt-line1" oninput="applyLayout()"></div>
+          <div class="fg"><label class="lbl">Linha 2</label><input class="inp" id="lt-line2" oninput="applyLayout()"></div>
+        </div>
+        <div class="card pnl-section">
+          <h4>&#128196; Texto do Certificado</h4>
+          <div class="fg"><label class="lbl">Introdução (professores)</label>
+            <textarea class="inp" id="lt-intro" rows="2" oninput="applyLayout()"></textarea>
+          </div>
+          <div class="fg"><label class="lbl">Antes do evento</label>
+            <textarea class="inp" id="lt-beforeEvent" rows="2" oninput="applyLayout()"></textarea>
+          </div>
+          <div class="fg"><label class="lbl">Sufixo do período</label>
+            <textarea class="inp" id="lt-periodSuffix" rows="2" oninput="applyLayout()"></textarea>
+          </div>
+          <div class="fg"><label class="lbl">Texto dos alunos</label>
+            <textarea class="inp" id="lt-cert-text-aluno" rows="2" oninput="applyLayout()"></textarea>
+          </div>
+          <div class="fg"><label class="lbl">URL validação</label>
+            <input class="inp" id="lt-url" oninput="applyLayout()" placeholder="https://...">
+          </div>
+        </div>
       </div>
-      <div>
+      <div style="position:sticky;top:16px">
         <div style="font-weight:700;font-size:14px;margin-bottom:10px;color:var(--ts)">Pré-visualização em tempo real</div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <span style="font-size:13px;font-weight:600;color:var(--ts)">Pré-visualização:</span>
-        <select id="prev-mode" class="inp" style="width:auto;padding:4px 10px;font-size:13px" onchange="renderLayoutPreview()">
-          <option value="professor">Certificado de Professor</option>
-          <option value="infantil">Certificado de Aluno (Ed. Infantil)</option>
-        </select>
-      </div>
-      <div id="layout-preview"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <label style="font-size:13px;font-weight:600">Tipo:</label>
+          <select id="prev-mode" class="inp" style="width:auto;padding:4px 10px;font-size:13px" onchange="renderLayoutPreview()">
+            <option value="professor">Certificado de Professor</option>
+            <option value="infantil">Certificado de Aluno (Ed. Infantil)</option>
+          </select>
+        </div>
+        <div id="layout-preview" style="transform-origin:top left;overflow:hidden;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.15)"></div>
         <div style="font-size:12px;color:#aaa;margin-top:8px;text-align:center">Os dados são de exemplo. O certificado real usa os dados reais.</div>
       </div>
     </div>
   </div>
-
   <div id="pg-signers" style="display:none">
     <div class="sh"><h2>✍️ Assinantes</h2>
       <button class="btn bp" onclick="openSignerModal()">+ Novo Assinante</button>
@@ -297,17 +303,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
     </div>
     <div id="signers-list"></div>
   </div>
-  <div id="pg-users" style="display:none">
-    <div class="sh"><h2>&#128101; Gerenciar Usu&#225;rios</h2>
-      <button class="btn bp" onclick="openUserModal()">+ Novo Usu&#225;rio</button></div>
+  <di  <div id="pg-users" style="display:none">
+    <div class="sh"><h2>&#128101; Gerenciar Usuários</h2>
+      <button class="btn bp" onclick="openUserModal()">+ Novo Usuário</button>
+    </div>
     <div id="users-list"></div>
   </div>
   <div id="pg-config" style="display:none">
     <div class="sh"><h2>Configurações</h2></div>
     <div class="cfg-box">
-      <h3>&#127760; Banco de Dados — Google Sheets</h3>
-      <p style="font-size:13px;color:#555;margin-bottom:12px;line-height:1.6">Cole o link gerado no Google Apps Script.</p>
-      <div class="fg"><label class="lbl">URL da Web App</label><input class="inp" id="cfg-url" placeholder="https://script.google.com/macros/s/SEU_ID/exec"></div>
+      <h3>&#127760; Banco de Dados — Supabase</h3>
+      <p style="font-size:13px;color:#555;margin-bottom:12px;line-height:1.6">Configurações do banco de dados Supabase.</p>
+      <div class="fg"><label class="lbl">URL do Supabase (configurada automaticamente)</label><input class="inp" id="cfg-url" placeholder="https://script.google.com/macros/s/SEU_ID/exec"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn bp" onclick="conectar()">&#128190; Salvar e Conectar</button>
         <button class="btn bs" onclick="testar()">&#128268; Testar</button>
@@ -323,7 +330,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
         <input type="file" id="bkp-file" accept=".json" style="display:none" onchange="importBkp(this)">
       </div>
     </div>
-  </div>
+  
 </div>
 
 <!-- MODAL FORMAÇÃO -->
@@ -649,20 +656,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
     <button onclick="doLogin()" class="btn bp" style="width:100%;justify-content:center;padding:11px;font-size:15px">Entrar</button>
     <div id="login-err" style="margin-top:12px;text-align:center;font-size:13px;color:#c62828;display:none"></div>
   </div>
+</div>
 
 <script>
-var SME_VERSION='SME-v2026-05-28';
-// ── SUPABASE CONFIG ────────────────────────────────────────────────────────────
-var SUPA_URL='https://jabgimlqhgsmaoncfaon.supabase.co';
-var SUPA_KEY='sb_publishable_pdd6Ur198pja2PCgXjrZvg_TkITQdpU';
-
-function supaFetch(method, table, body, params){
-  var url=SUPA_URL+'/rest/v1/'+table+(params?'?'+params:'');
-  var opts={method:method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
-  if(body) opts.body=JSON.stringify(body);
-  return fetch(url,opts).then(function(r){
-    if(!r.ok) return r.text().then(function(t){throw new Error(t);});
-    return r.json().catch
 function setTab(tab){
   curTab=tab;
   ['events','teachers','students','certs','layout','config','users','signers'].forEach(function(t){
@@ -681,7 +677,19 @@ function setTab(tab){
   if(tab==='signers') renderSigners();
 }
 
-(function(){return [];});
+
+var SME_VERSION='SME-v2026-07-07';
+// ── SUPABASE CONFIG ────────────────────────────────────────────────────────────
+var SUPA_URL='https://jabgimlqhgsmaoncfaon.supabase.co';
+var SUPA_KEY='sb_publishable_pdd6Ur198pja2PCgXjrZvg_TkITQdpU';
+
+function supaFetch(method, table, body, params){
+  var url=SUPA_URL+'/rest/v1/'+table+(params?'?'+params:'');
+  var opts={method:method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':method==='POST'?'resolution=merge-duplicates,return=representation':'return=representation'}};
+  if(body) opts.body=JSON.stringify(body);
+  return fetch(url,opts).then(function(r){
+    if(!r.ok) return r.text().then(function(t){throw new Error(t);});
+    return r.json().catch(function(){return [];});
   });
 }
 
@@ -707,6 +715,23 @@ var SB={
   getStudents:function(){return supaFetch('GET','students',null,'order=name');},
   saveStudent:function(st){return supaFetch('POST','students',{id:String(st.id),name:st.name,cpf:st.cpf||'',classe:st.classe||'',school:st.school||''},'on_conflict=id');},
   delStudent:function(id){return supaFetch('DELETE','students',null,'id=eq.'+id);},
+  // Certificados emitidos
+  saveCertificado:function(cert){
+    return supaFetch('POST','certificados',{
+      id:cert.id,
+      teacher_cpf:cert.cpf||'',
+      teacher_name:cert.name||'',
+      event_id:String(cert.eventId||''),
+      event_name:cert.eventName||'',
+      hours:parseInt(cert.hours)||0,
+      issue_date:cert.date||'',
+      validation_code:cert.code||'',
+      cert_html:cert.html||''
+    },'on_conflict=id');
+  },
+  getCertificadosByCpf:function(cpf){
+    return supaFetch('GET','certificados',null,'teacher_cpf=eq.'+encodeURIComponent(cpf)+'&order=created_at.desc');
+  },
 };
 
 var ADMIN_KEY='sme-users-v1',SESSION_KEY='sme-session',currentUser=null;
@@ -915,7 +940,7 @@ function bgImgRemove(){
 }
 function saveBgLocal(evId,data){try{localStorage.setItem('sme-bg-'+evId,data||'');}catch(e){}}
 function loadBgLocal(evId){try{return localStorage.getItem('sme-bg-'+evId)||'';}catch(e){return '';}}
-function getEvBgData(ev){if(ev.bgData&&ev.bgData.length>100)return ev.bgData;return loadBgLocal(ev.id)||'';}
+function getEvBgData(ev){if(ev&&ev.bgData&&ev.bgData.length>100)return ev.bgData;if(ev&&ev.id){var local=loadBgLocal(ev.id);if(local)return local;}return (L&&L.bgData&&L.bgData.length>100)?L.bgData:'';}
 
 function addSig(){if(certSigs.length>=4){toast('Máximo 4 assinaturas.','i');return;}certSigs.push({name:'',title:''});renderSigsList();}
 function delSig(i){if(certSigs.length<=2){toast('Mínimo 2 assinaturas.','i');return;}certSigs.splice(i,1);renderSigsList();}
@@ -1075,25 +1100,23 @@ function renderStudents(){
   var el=document.getElementById('stu-list');
   if(!el)return;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum aluno encontrado.</div>';return;}
-  var rows=list.map(function(s){
-    var card=document.createElement('div');
-    card.className='card ti';card.style.marginBottom='0';
-    card.innerHTML=
-      '<div class="tav" style="background:linear-gradient(135deg,#90caf9,#1565c0)">'+s.name[0].toUpperCase()+'</div>'+
-      '<div style="flex:1;min-width:0">'+
-        '<div style="font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(s.name)+'</div>'+
-        '<div style="font-size:11.5px;color:var(--tm)">'+(s.cpf?'CPF: '+esc(s.cpf):'Sem CPF')+(s.classe?' &nbsp;|&nbsp; Turma: '+esc(s.classe):'')+'</div>'+
+  el.innerHTML=list.map(function(s){
+    return '<div class="card ti">'+
+      '<div style="font-weight:700;font-size:14px">'+esc(s.name)+'</div>'+
+      '<div style="font-size:12px;color:#666;margin-top:2px">'+(s.cpf||'Sem CPF')+'</div>'+
+      '<div style="font-size:12px;color:#888">'+(s.classe||'')+(s.school?' — '+esc(s.school):'')+'</div>'+
+      '<div style="display:flex;gap:6px;margin-top:8px">'+
+        '<button class="btn bs btn-sm" data-edit="'+s.id+'">✏️ Editar</button>'+
+        '<button class="btn bd btn-sm" data-del="'+s.id+'">🗑</button>'+
       '</div>'+
-      '<div style="display:flex;gap:4px" id="sbtn-'+s.id+'"></div>';
-    var e2=document.createElement('button');e2.className='btn bg_ btn-sm';e2.textContent='✏️';
-    e2.onclick=(function(id){return function(){openStudentModal(id);};})(s.id);
-    var d=document.createElement('button');d.className='btn bg_ btn-sm';d.style.color='var(--rd)';d.textContent='🗑';
-    d.onclick=(function(id){return function(){delStudent(id);};})(s.id);
-    card.querySelector('#sbtn-'+s.id).appendChild(e2);
-    card.querySelector('#sbtn-'+s.id).appendChild(d);
-    return card.outerHTML;
-  });
-  el.innerHTML=rows.join('');
+    '</div>';
+  }).join('');
+  el.onclick=function(ev){
+    var editBtn=ev.target.closest('[data-edit]');
+    var delBtn=ev.target.closest('[data-del]');
+    if(editBtn) openStuModal(editBtn.getAttribute('data-edit'));
+    if(delBtn) delStu(delBtn.getAttribute('data-del'));
+  };
 }
 
 function openStudentModal(id){
@@ -1271,6 +1294,10 @@ function bgConnect(){
     _bgConnecting=false;
     setDbBadge(true);
     renderEvents();updateMeta();
+    if(window._keepAliveTimer) clearInterval(window._keepAliveTimer);
+    window._keepAliveTimer=setInterval(function(){
+      supaFetch('GET','teachers',null,'limit=1').catch(function(){});
+    }, 9*60*1000);
     console.log('[Supabase] Connected! Teachers:'+S.teachers.length+' Events:'+S.events.length);
   }).catch(function(err){
     _bgConnecting=false;
@@ -1279,117 +1306,34 @@ function bgConnect(){
     toast('Erro ao conectar: '+err.message,'e');
   });
 }
-function setDbBadge(ok){var el=document.getElementById('db-badge');el.textContent=ok?'✅ Google Sheets':'❌ Sem conexão';el.style.background=ok?'rgba(255,255,255,.22)':'rgba(198,40,40,.4)';}
+function setDbBadge(ok){var el=document.getElementById('db-badge');el.textContent=ok===null?'Conectando...':ok?'✅ Conectado':'❌ Sem conexão';el.style.background=ok===null?'rgba(255,165,0,.4)':ok?'rgba(46,125,50,.6)':'rgba(198,40,40,.4)';}
 function updateMeta(){document.getElementById('hdr-meta').textContent=S.teachers.length+' professores · '+S.students.length+' alunos · '+S.events.length+' formações';}
 function toast(msg,type){type=type||'s';var el=document.getElementById('tst');el.textContent=msg;el.className='tst tst-'+type;el.style.display='block';clearTimeout(el._t);el._t=setTimeout(function(){el.style.display='none';},3500);}
-function nid(arr){return arr.length?Math.max.apply(null,arr.map(function(x){return x.id;}))+1:1;}
+function nid(arr){return 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function fmtCpf(inp){var v=inp.value.replace(/\D/g,'');v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');inp.value=v.slice(0,14);}
 function renderCurrent(){updateMeta();setTab(curTab);}
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-function conectar(){
-  var v=document.getElementById('cfg-url').value.trim();
-  if(!v||!v.startsWith('https://script.google.com')){toast('URL inválida.','e');return;}
-  apiUrl=v;
-  localStorage.setItem('sme-api-url',v);
-  var el=document.getElementById('cfg-status');
-  el.innerHTML='⏳ Conectando e carregando dados...';
-  fetch(v,{method:'GET'})
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(function(j){
-      if(!j.ok) throw new Error(j.error||'Resposta inválida');
-      // Restore signers from GSheets if localStorage is empty
-      if(j.signers&&j.signers.length){
-        var localSig=[];
-        try{localSig=JSON.parse(localStorage.getItem(SIGNERS_KEY)||'[]');}catch(e2){}
-        if(!localSig.length){
-          localStorage.setItem(SIGNERS_KEY,JSON.stringify(j.signers));
-        }
-      }
-      // Restore users from GSheets if localStorage is empty
-      if(j.users&&j.users.length){
-        var localUsr=[];
-        try{localUsr=JSON.parse(localStorage.getItem(ADMIN_KEY)||'[]');}catch(e2){}
-        if(!localUsr.length){
-          localStorage.setItem(ADMIN_KEY,JSON.stringify(j.users));
-        }
-      }
-      S={
-        teachers:(j.teachers||[]).map(function(t){t.id=parseInt(t.id)||t.id;return t;}),
-        events:(j.events||[]).map(function(e){
-          e.id=parseInt(e.id)||e.id;
-          // Try to restore full event data from localStorage (has participants, encontros, etc.)
-          try{
-            var cached=localStorage.getItem('sme-ev-'+e.id);
-            if(cached){
-              var cachedEv=JSON.parse(cached);
-              // Merge: keep GSheets data but restore participants and encontros from cache
-              if(cachedEv.participants&&cachedEv.participants.length) e.participants=cachedEv.participants;
-              if(cachedEv.encontros&&cachedEv.encontros.length) e.encontros=cachedEv.encontros;
-            } else {
-              // Try participants-only cache
-              var partsCached=localStorage.getItem('sme-ev-parts-'+e.id);
-              if(partsCached){var pArr=JSON.parse(partsCached);if(pArr&&pArr.length)e.participants=pArr;}
-            }
-          }catch(e2){}
-          if(e.participants)e.participants=e.participants.map(function(p){return parseInt(p)||p;});
-          return e;
-        }),
-        students:(j.students||[]).map(function(s){s.id=parseInt(s.id)||s.id;return s;})
-      };
-      connected=true;setDbBadge(true);updateMeta();renderCurrent();
-      el.innerHTML='<span style="color:var(--g)">✅ Conectado! '+S.events.length+' formação(ões), '+S.teachers.length+' professor(es), '+S.students.length+' aluno(s) carregado(s).</span>';
-      toast('Conectado ao Google Sheets!');
-    })
-    .catch(function(e){
-      connected=false;setDbBadge(false);
-      el.innerHTML='<span style="color:var(--rd)">❌ Falha: '+esc(e.message)+'</span>'+
-        '<br><span style="font-size:11px;color:#888">Verifique se o script está publicado como "Qualquer pessoa" no Apps Script.</span>';
-    });
-}
-function testar(){
-  var url=document.getElementById('cfg-url').value.trim()||apiUrl;
-  if(!url){toast('Nenhuma URL.','e');return;}
-  var el=document.getElementById('cfg-status');
-  el.innerHTML='⏳ Testando conexão...';
-  fetch(url+'?test=1',{method:'GET'})
-    .then(function(r){
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      return r.json();
-    })
-    .then(function(j){
-      if(j.ok){
-        el.innerHTML='<span style="color:var(--g)">✅ Conexão OK! Planilha encontrada.</span>';
-        connected=true;setDbBadge(true);
-      } else {
-        el.innerHTML='<span style="color:var(--rd)">❌ Script respondeu com erro: '+esc(j.error||'desconhecido')+'</span>';
-      }
-    })
-    .catch(function(e){
-      el.innerHTML='<span style="color:var(--rd)">❌ Falha: '+esc(e.message)+'</span>'+
-        '<br><span style="font-size:11px;color:#888">Verifique se o script está publicado como "Qualquer pessoa" no Apps Script.</span>';
-    });
-}
-function desconectar(){if(!confirm('Remover conexão?'))return;apiUrl='';localStorage.removeItem('sme-api-url');connected=false;setDbBadge(false);document.getElementById('cfg-url').value='';document.getElementById('cfg-status').innerHTML='';toast('Removido.','i');}
-function exportBkp(){var b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Backup exportado!');}
-function importBkp(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var imp=JSON.parse(e.target.result);if(!imp.teachers||!imp.events)throw new Error('Inválido');if(!imp.students)imp.students=[];if(!confirm('Importar '+imp.teachers.length+' professores e '+imp.events.length+' formações?'))return;S=imp;renderCurrent();toast('Importado!');}catch(err){toast('Erro: '+err.message,'e');}input.value='';};r.readAsText(f);}
+function conectar(){toast('Usando Supabase — já configurado.','i');}
+function testConnection(){bgConnect();}
+function removeConnection(){toast('Supabase é a conexão padrão.','i');}
 
 // ── LOGOS ─────────────────────────────────────────────────────────────────────
 function uploadLogo(type,input){
   var file=input.files[0];if(!file)return;
   var r=new FileReader();
   r.onload=function(e){
-    if(type==='sme')L.logoSME=e.target.result;
-    else if(type==='pref')L.logoPrefeitura=e.target.result;
+    if(type==='sme'||type==='logoSME')L.logoSME=e.target.result;
+    else if(type==='pref'||type==='logoPrefeitura')L.logoPrefeitura=e.target.result;
     else L.logoFormacao=e.target.result;
     refreshLogoPreviews();renderLayoutPreview();
   };
   r.readAsDataURL(file);input.value='';
 }
 function removeLogo(type){
-  if(type==='sme')L.logoSME='';
-  else if(type==='pref')L.logoPrefeitura='';
+  if(type==='sme'||type==='logoSME')L.logoSME='';
+  else if(type==='pref'||type==='logoPrefeitura')L.logoPrefeitura='';
   else L.logoFormacao='';
   refreshLogoPreviews();renderLayoutPreview();
 }
@@ -1432,10 +1376,25 @@ function removeLogoField(field,prevId){
   renderLayoutPreview();
 }
 function refreshLogoPreviews(){
-  var s=document.getElementById('prev-sme');
-  if(s)s.innerHTML=L.logoSME?'<img src="'+L.logoSME+'" style="max-width:100%;max-height:100%;object-fit:contain">':'<span style="font-size:11px;color:#bbb">Nenhuma logo carregada</span>';
-  var f=document.getElementById('prev-formacao');
-  if(f)f.innerHTML=L.logoFormacao?'<img src="'+L.logoFormacao+'" style="max-width:100%;max-height:100%;object-fit:contain">':'<span style="font-size:9px;color:#bbb;text-align:center">Sem logo</span>';
+  // Update logo previews in Personalizar tab
+  var prevs={
+    'prev-logo-pref': L.logoPrefeitura,
+    'prev-logo-sme': L.logoSME,
+    'prev-logo-form': L.logoFormacao,
+    'prev-sme': L.logoSME,
+    'prev-formacao': L.logoFormacao,
+    'global-bg-prev': L.bgData
+  };
+  Object.keys(prevs).forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    var val=prevs[id];
+    if(id==='global-bg-prev'){
+      el.innerHTML=val?'<img src="'+val+'" style="max-width:100%;max-height:80px;object-fit:contain">':'<span style="font-size:11px;color:#bbb">Sem imagem padrão</span>';
+    } else {
+      el.innerHTML=val?'<img src="'+val+'" style="max-width:100%;max-height:100%;object-fit:contain">':'<span style="font-size:10px;color:#aaa;text-align:center">Padrão</span>';
+    }
+  });
 }
 function evLogoChanged(input){
   var file=input.files[0];if(!file)return;
@@ -1568,13 +1527,28 @@ function renderLayoutPreview(){
       adjunct:'Rocheler Carla Dalazen dos Santos',
       adjunctTitle:'Secretária Municipal de Educação Adjunta',
       startPage:1,startReg:1,
-      logoData:L.logoFormacao||''
+      logoData:L.logoFormacao||'',
+      bgData:L.bgData||''
     };
     var sT={name:'NOME DO PROFESSOR',cpf:'000.000.000-00'};
     el.innerHTML=buildP1(sEv,sT,0);
     // Restore L
     L.intro=_L.intro;L.beforeEvent=_L.beforeEvent;L.periodSuffix=_L.periodSuffix;
   }
+  // Scale preview to fit container - use fixed 620px target width
+  setTimeout(function(){
+    var inner=el.firstElementChild;
+    if(inner){
+      var targetW=620;
+      var iW=inner.scrollWidth||1122;
+      var iH=inner.scrollHeight||794;
+      var sc=targetW/iW;
+      el.style.cssText='transform:scale('+sc+');transform-origin:top left;display:block;width:'+iW+'px;';
+      el.parentElement.style.height=(iH*sc+10)+'px';
+      el.parentElement.style.width=targetW+'px';
+      el.parentElement.style.overflow='hidden';
+    }
+  },150);
 }
 
 // ── TIPO ──────────────────────────────────────────────────────────────────────
@@ -1742,19 +1716,83 @@ function saveEv(){
 function delEv(id){if(!confirm('Excluir?'))return;S.events=S.events.filter(function(e){return e.id!==id;});if(selEvId===id){selEvId=null;prevTchId=null;}renderEvents();updateMeta();toast('Excuída.','i');apiCall({action:'deleteEvent',id:id}).catch(function(){});}
 
 // ── PROFESSORES ───────────────────────────────────────────────────────────────
-function renderTeachers(){var q=(document.getElementById('tch-srch')&&document.getElementById('tch-srch').value||'').toLowerCase();var list=S.teachers.filter(function(t){return t.name.toLowerCase().indexOf(q)>=0||(t.cpf||'').indexOf(q)>=0;});var el=document.getElementById('tch-list');if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum encontrado.</div>';return;}el.innerHTML=list.map(function(t){return'<div class="card ti" style="margin-bottom:0"><div class="tav">'+esc(t.name[0])+'</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(t.name)+'</div><div style="font-size:11.5px;color:var(--tm)">CPF: '+esc(t.cpf||'—')+'</div></div><div style="display:flex;gap:4px"><button class="btn bg_ btn-sm" onclick="openTchModal('+t.id+')">✏️</button><button class="btn bg_ btn-sm" style="color:var(--rd)" onclick="delTch('+t.id+')">\ud83d\uddd1</button></div></div>';}).join('');}
+function renderTeachers(){
+  var q=(document.getElementById('tch-srch')&&document.getElementById('tch-srch').value||'').toLowerCase();
+  var list=S.teachers.filter(function(t){return t.name.toLowerCase().indexOf(q)>=0||(t.cpf||'').indexOf(q)>=0;});
+  var el=document.getElementById('tch-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum professor encontrado.</div>';return;}
+  el.innerHTML=list.map(function(t){
+    var tid=String(t.id).replace(/"/g,'');
+    return '<div class="card ti" data-edit="'+tid+'" data-del="'+tid+'">'+
+      '<div style="font-weight:700;font-size:14px">'+esc(t.name)+'</div>'+
+      '<div style="font-size:12px;color:#666;margin-top:2px">'+(t.cpf||'Sem CPF')+'</div>'+
+      '<div style="font-size:12px;color:#888">'+(t.school||'')+'</div>'+
+      '<div style="display:flex;gap:6px;margin-top:8px">'+
+        '<button class="btn bs btn-sm" data-action="edit" data-id="'+tid+'">✏️ Editar</button>'+
+        '<button class="btn bd btn-sm" data-action="del" data-id="'+tid+'">🗑</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  el.onclick=function(ev){
+    var btn=ev.target.closest('[data-action]');
+    if(!btn)return;
+    var id=btn.getAttribute('data-id');
+    if(btn.getAttribute('data-action')==='edit') openTchModal(id);
+    if(btn.getAttribute('data-action')==='del') delTch(id);
+  };
+}
 function openTchModal(id){editTchId=id||null;document.getElementById('tch-modal-ttl').textContent=id?'Editar':'Novo Professor';var t=id?S.teachers.find(function(x){return x.id===id;}):null;document.getElementById('tf-name').value=t?t.name||'':'';document.getElementById('tf-cpf').value=t?t.cpf||'':'';document.getElementById('tch-modal').style.display='flex';}
 function closeTchModal(){document.getElementById('tch-modal').style.display='none';}
-function saveTch(){var name=document.getElementById('tf-name').value.trim();if(!name){toast('Preencha o nome.','e');return;}var cpf=document.getElementById('tf-cpf').value.trim();if(editTchId){S.teachers=S.teachers.map(function(t){return t.id===editTchId?Object.assign({},t,{name:name,cpf:cpf}):t;});toast('Atualizado!');apiCall({action:'saveTeacher',data:{id:editTchId,name:name,cpf:cpf}}).catch(function(){});}else{var newId=nid(S.teachers);S.teachers.push({id:newId,name:name,cpf:cpf});toast('Cadastrado!');apiCall({action:'saveTeacher',data:{name:name,cpf:cpf}}).catch(function(){});}closeTchModal();renderTeachers();updateMeta();}
-function delTch(id){if(!confirm('Excluir?'))return;S.teachers=S.teachers.filter(function(t){return t.id!==id;});S.events=S.events.map(function(e){return Object.assign({},e,{participants:(e.participants||[]).filter(function(p){return p!==id;})});});if(prevTchId===id)prevTchId=null;renderTeachers();updateMeta();toast('Excuído.','i');apiCall({action:'deleteTeacher',id:id}).catch(function(){});}
-function importFile(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(e.target.result,{type:'binary'});var ws=wb.Sheets[wb.SheetNames[0]];var rows=XLSX.utils.sheet_to_json(ws,{header:1});var hdr=(rows[0]||[]).map(function(h){return String(h).toLowerCase();});var nc=0,cc=1;var ni=hdr.findIndex(function(h){return h.indexOf('nome')>=0;});if(ni>=0)nc=ni;var ci=hdr.findIndex(function(h){return h.indexOf('cpf')>=0;});if(ci>=0)cc=ci;var start=hdr.some(function(h){return h.indexOf('nome')>=0||h.indexOf('cpf')>=0;})?1:0;var count=0;for(var i=start;i<rows.length;i++){var row=rows[i];var name=String(row[nc]||'').trim();if(!name)continue;if(S.teachers.some(function(t){return t.name.toLowerCase()===name.toLowerCase();}))continue;var cpf=String(row[cc]||'').trim();var newId=nid(S.teachers);S.teachers.push({id:newId,name:name,cpf:cpf});count++;apiCall({action:'saveTeacher',data:{name:name,cpf:cpf}}).catch(function(){});}if(!count){toast('Nenhum novo.','i');return;}renderTeachers();updateMeta();toast(count+' professor(es) importado(s)!');}catch(err){toast('Erro: '+err.message,'e');}input.value='';};r.readAsBinaryString(f);}
+function saveTch(){
+  var name=document.getElementById('tf-name').value.trim();
+  if(!name){toast('Preencha o nome.','e');return;}
+  var cpf=(document.getElementById('tf-cpf').value||'').trim().replace(/\D/g,'');
+  
+  // Validate CPF uniqueness
+  if(cpf){
+    var dupCpf=S.teachers.find(function(t){
+      return String(t.id)!==String(editTchId) && 
+             (t.cpf||'').replace(/\D/g,'')==cpf;
+    });
+    if(dupCpf){
+      toast('CPF já cadastrado para: '+dupCpf.name,'e');
+      return;
+    }
+  }
+  
+  if(editTchId){
+    // Edit existing - use String comparison to handle type differences
+    var found=false;
+    S.teachers=S.teachers.map(function(t){
+      if(String(t.id)===String(editTchId)){
+        found=true;
+        return Object.assign({},t,{name:name,cpf:cpf});
+      }
+      return t;
+    });
+    if(!found){toast('Professor não encontrado.','e');return;}
+    toast('Atualizado!');
+    apiCall({action:'saveTeacher',data:{id:editTchId,name:name,cpf:cpf}}).catch(function(){});
+  } else {
+    var newId=nid(S.teachers);
+    var newTch={id:newId,name:name,cpf:cpf,
+      school:(document.getElementById('tf-school')&&document.getElementById('tf-school').value)||'',
+      role:''};
+    S.teachers.push(newTch);
+    toast('Cadastrado!');
+    apiCall({action:'saveTeacher',data:newTch}).catch(function(){});
+  }
+  closeTchModal();renderTeachers();updateMeta();
+}
+function delTch(id){if(!confirm('Excluir?'))return;S.teachers=S.teachers.filter(function(t){return t.id!==id;});S.events=S.events.map(function(e){return Object.assign({},e,{participants:(e.participants||[]).filter(function(p){return p!==id;})});});if(prevTchId===id)prevTchId=null;renderTeachers();updateMeta();toast('Excuído.','i');apiCall({action:'delTeacher',id:id}).catch(function(){});}
+function importFile(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(e.target.result,{type:'binary'});var ws=wb.Sheets[wb.SheetNames[0]];var rows=XLSX.utils.sheet_to_json(ws,{header:1});var hdr=(rows[0]||[]).map(function(h){return String(h).toLowerCase();});var nc=0,cc=1;var ni=hdr.findIndex(function(h){return h.indexOf('nome')>=0;});if(ni>=0)nc=ni;var ci=hdr.findIndex(function(h){return h.indexOf('cpf')>=0;});if(ci>=0)cc=ci;var start=hdr.some(function(h){return h.indexOf('nome')>=0||h.indexOf('cpf')>=0;})?1:0;var count=0;for(var i=start;i<rows.length;i++){var row=rows[i];var name=String(row[nc]||'').trim();if(!name)continue;if(S.teachers.some(function(t){return t.name.toLowerCase()===name.toLowerCase();}))continue;var cpf=String(row[cc]||'').trim();var newId=nid(S.teachers);var newTch={id:newId,name:name,cpf:cpf,school:document.getElementById('tf-school')&&document.getElementById('tf-school').value||'',role:''};S.teachers.push(newTch);count++;apiCall({action:'saveTeacher',data:newTch}).catch(function(){});}if(!count){toast('Nenhum novo.','i');return;}renderTeachers();updateMeta();toast(count+' professor(es) importado(s)!');}catch(err){toast('Erro: '+err.message,'e');}input.value='';};r.readAsBinaryString(f);}
 
 // ── CERTIFICADOS ──────────────────────────────────────────────────────────────
 function renderCertTab(){
   var el=document.getElementById('cert-ev-list');
   if(!S.events.length){el.innerHTML='<div class="empty">Nenhuma formação cadastrada.</div>';}
   else{el.innerHTML=S.events.map(function(ev){
-    // normalize id to number (may come as string from Google Sheets)
+    // normalize id
     ev.id=parseInt(ev.id)||ev.id;
     var ct=ev.certType||ev.type||'simple';
     var badge=ct==='infantil'?'<span class="bdg" style="font-size:10px;background:#fff3e0;color:#e65100">Ed. Infantil</span>':
@@ -1901,8 +1939,10 @@ function buildP1(ev,t,idx){
   var rightLogo=evLogo
     ?'<img src="'+evLogo+'" style="max-height:14%;max-width:22%;object-fit:contain">'
     :'<div class="cbdg" style="background:linear-gradient(135deg,'+L.primary+','+L.bar2+')"><div>'+esc(L.badge1)+'</div><div>'+esc(L.badge2)+'</div><div style="font-size:1.2em">'+esc(L.year)+'</div></div>';
+  var _bgP1=getEvBgData(ev)||L.bgData||'';
+  var _bgStyleP1=_bgP1?'background-image:url("'+_bgP1+'");background-size:cover;background-position:center;':'';
   return(
-    '<div class="cpw">'+
+    '<div class="cpw" style="'+_bgStyleP1+'">'+
     '<div class="cwm"></div>'+
     '<div class="cbar" style="background:linear-gradient(to right,'+L.bar1+','+L.bar2+','+L.bar1+')"></div>'+
     '<div class="chdr">'+leftLogo+rightLogo+'</div>'+
@@ -2219,7 +2259,8 @@ function printLandscapeWithPositions(ev,parts,positions){
   var evLogo=getEvLogo(ev);
   var leftL=L.logoSME?'<img src="'+L.logoSME+'" class="logo-sme">':'<div><div class="s1" style="color:'+L.primary+'">'+L.line1+'</div><div class="s2" style="color:'+L.dark+'">'+L.line2+'</div><div class="sl" style="background:linear-gradient(to right,'+L.primary+',#a5d6a7)"></div></div>';
   var rightL=evLogo?'<img src="'+evLogo+'" class="logo-ev">':'<div class="bdg" style="background:linear-gradient(135deg,'+L.primary+','+L.bar2+')"><div>'+L.badge1+'</div><div>'+L.badge2+'</div></div>';
-  var p2rows=hasP2?ev.encontros.map(function(enc){return'<tr><td style="white-space:nowrap;font-weight:600">'+enc.data+'</td><td style="white-space:nowrap;font-size:9pt">'+enc.hora+'</td><td>'+enc.tematica+'</td><td style="font-size:9pt">'+enc.publico+'</td><td style="text-align:center;font-weight:700">'+enc.ch+'</td></tr>';}).join(''):'';
+  // p2rows is built per-person inside the map (see below)
+  var _allEncs=hasP2?ev.encontros:[];
   var pagesHtml=parts.map(function(item,idx){
     var t=item.teacher||item;var nome=t.name||'';var cpf=t.cpf||'';
     var cod=gerarCodigo(ev,{name:nome,cpf:cpf},idx);
@@ -2251,7 +2292,23 @@ function printLandscapeWithPositions(ev,parts,positions){
       '<div class="bar" style="background:linear-gradient(to right,'+L.bar1+','+L.bar2+','+L.bar1+')"></div>'+
       posEls+
       '</div>';
-    var p2=hasP2?'<div class="p2"><table><thead><tr><th style="width:65px">DATA</th><th style="width:128px">HOR\u00c1RIO</th><th>TEM\u00c1TICA</th><th style="width:118px">P\u00daBLICO</th><th style="width:38px">CH</th></tr></thead><tbody>'+p2rows+'</tbody></table><div class="ttlh">Carga Hor\u00e1ria Total: '+ev.hours+' Horas</div><div class="p2bar" style="background:linear-gradient(to right,'+L.bar1+','+L.bar2+','+L.bar1+')"></div></div>':'';
+    // Filter encontros by this person's presence
+    var cpfClean=(t.cpf||'').replace(/\D/g,'');
+    var nomeLow=(t.name||'').toLowerCase().trim();
+    var hasAnyPresence=_allEncs.some(function(enc){return enc.presentes&&enc.presentes.length>0;});
+    var filteredEncs=hasP2?_allEncs.filter(function(enc){
+      if(!hasAnyPresence||!enc.presentes||!enc.presentes.length) return true;
+      return enc.presentes.some(function(p){
+        var pCpf=(p.cpf||'').replace(/\D/g,'');
+        var pNome=(p.nome||'').toLowerCase().trim();
+        return (cpfClean&&pCpf&&cpfClean===pCpf)||pNome===nomeLow;
+      });
+    }):[];
+    var chInd=filteredEncs.reduce(function(s,enc){return s+(parseInt(enc.ch)||0);},0)||ev.hours||0;
+    var p2rows=filteredEncs.map(function(enc){
+      return '<tr><td style="white-space:nowrap;font-weight:600">'+enc.data+'</td><td style="white-space:nowrap;font-size:9pt">'+enc.hora+'</td><td>'+enc.tematica+'</td><td style="font-size:9pt">'+enc.publico+'</td><td style="text-align:center;font-weight:700">'+enc.ch+'</td></tr>';
+    }).join('');
+    var p2=hasP2&&filteredEncs.length?'<div class="p2"><table><thead><tr><th style="width:65px">DATA</th><th style="width:128px">HOR\u00c1RIO</th><th>TEM\u00c1TICA</th><th style="width:118px">P\u00daBLICO</th><th style="width:38px">CH</th></tr></thead><tbody>'+p2rows+'</tbody></table><div class="ttlh">Carga Hor\u00e1ria Total: '+chInd+' Horas</div><div class="p2bar" style="background:linear-gradient(to right,'+L.bar1+','+L.bar2+','+L.bar1+')"></div></div>':'';
     return p1+p2;
   }).join('');
   var css='*{margin:0;padding:0;box-sizing:border-box}@page{size:A4 landscape;margin:0}body{font-family:"EB Garamond",Georgia,serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}.logo-sme{max-height:70px;max-width:160px;object-fit:contain}.logo-ev{max-height:64px;max-width:64px;object-fit:contain;border-radius:50%}.pg{width:297mm;height:210mm;position:relative;overflow:hidden;page-break-after:always;background:#fff}.bar{position:absolute;bottom:0;left:0;right:0;height:8px}.wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#e8f5e9,transparent 70%);opacity:.35}.hdr2{display:flex;justify-content:space-between;align-items:center;margin-bottom:5mm}.s1{font-size:8pt;font-weight:700;letter-spacing:1px;font-family:"DM Sans",sans-serif}.s2{font-size:8pt;font-weight:900;font-style:italic;letter-spacing:1px;font-family:"DM Sans",sans-serif}.sl{width:48px;height:2px;margin-top:3px}.bdg{width:58px;height:58px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:5.5pt;text-align:center;font-family:"DM Sans",sans-serif;font-weight:700;line-height:1.4}.ttl{text-align:center;font-weight:400;letter-spacing:1px;margin-bottom:3mm}.bdy{text-align:center;line-height:1.85;color:#333}.nm{display:block;font-weight:700;margin:2px 0;letter-spacing:.5px}.ev{display:block;font-size:12pt;font-weight:700;color:#1a1a1a;margin:2px 0}.p2{width:297mm;min-height:210mm;padding:12mm 12mm 8mm;font-family:"DM Sans",sans-serif;background:#fff;position:relative;page-break-after:always;display:flex;flex-direction:column}table{width:100%;border-collapse:collapse;font-size:8.5pt}th{border:1px solid #333;padding:5px 7px;font-weight:700;text-align:center;background:#f5f5f5}td{border:1px solid #aaa;padding:4px 7px;vertical-align:top;line-height:1.45}.ttlh{text-align:right;font-size:12pt;font-weight:700;margin-top:10px;border-top:2px solid #555;padding-top:6px}.p2bar{height:6px;position:absolute;bottom:0;left:0;right:0}';
@@ -2587,6 +2644,20 @@ function pedPrint(){
     });
   });
   console.log('[POSITIONS]', positions.length, positions.map(function(p){return p.role+'@'+Math.round(p.leftPct*100)+'%,'+Math.round(p.topPct*100)+'%';}));
+  // Save to portal before printing (non-blocking)
+  try{
+    if(pedMode==='landscape' && ledEv && ledParts && ledParts.length){
+      var _canvas=document.getElementById('ped-canvas');
+      var _html=_canvas?_canvas.innerHTML:'';
+      ledParts.forEach(function(p,i){
+        var t=p.teacher||p;
+        if(!t||!t.name) return;
+        var code=gerarCodigo(ledEv,t,i);
+        var evForCert=Object.assign({},ledEv);
+        saveCertificadoEmitido(evForCert, t, _html, code);
+      });
+    }
+  }catch(e2){console.warn('[Portal] Save error:',e2.message);}
   if(pedMode==='landscape') printLandscapeWithPositions(ledEv, ledParts, positions);
   else printPortraitWithPositions(pedEv, pedAlunos, positions);
 }
@@ -2964,7 +3035,8 @@ function openMultiPrint(ev,parts){
   var hasP2=ev.encontros&&ev.encontros.length>0;
   var periodo=hasP2?((ev.encontros[0].data||'')+' a '+(ev.encontros[ev.encontros.length-1].data||'')):ev.period||'';
   var suffix=(L.periodSuffix||DEFAULT_LAYOUT.periodSuffix).replace('{cidade}',ev.city||'').replace('{horas}',String(ev.hours||0));
-  var p2rows=hasP2?ev.encontros.map(function(enc){return'<tr><td style="white-space:nowrap;font-weight:600">'+enc.data+'</td><td style="white-space:nowrap;font-size:9pt">'+enc.hora+'</td><td>'+enc.tematica+'</td><td style="font-size:9pt">'+enc.publico+'</td><td style="text-align:center;font-weight:700">'+enc.ch+'</td></tr>';}).join(''):'';
+  // p2rows is built per-person inside the map (see below)
+  var _allEncs=hasP2?ev.encontros:[];
   var evLogo=getEvLogo(ev);
   var prefLH=L.logoPrefeitura?'<img src="'+L.logoPrefeitura+'" style="max-height:52px;max-width:80px;object-fit:contain">':'';
   var leftLogoHTML='<div style="display:flex;align-items:center;gap:6px">'+prefLH+(L.logoSME?'<img src="'+L.logoSME+'" class="logo-sme" alt="SME">':'<div><div class="s1" style="color:'+L.primary+'">'+'<span>'+esc(L.line1)+'</span></div><div class="s2" style="color:'+L.dark+'">'+esc(L.line2)+'</div></div>')+'</div>'
@@ -3265,7 +3337,7 @@ function compressImage(dataUrl, maxW, maxH, quality, callback){
     ctx.drawImage(img, 0, 0, w, h);
     // Use PNG to preserve transparency
     var isPng = dataUrl.indexOf('image/png') >= 0 || dataUrl.indexOf('data:image/png') === 0;
-    callback(canvas.toDataURL(isPng ? 'image/png' : 'image/jpeg', quality));
+    callback(canvas.toDataURL('image/png'));
   };
   img.src = dataUrl;
 }
@@ -3275,10 +3347,8 @@ function signerImgChanged(input){
   var r = new FileReader();
   r.onload = function(ev){
     var dataUrl = ev.target.result;
-    var isPng = file.type === 'image/png' || dataUrl.indexOf('data:image/png') === 0;
-    // For PNG (transparent): keep as PNG, just resize if too large
-    // For JPG: compress with quality 0.85
-    compressImage(dataUrl, 600, 200, isPng ? 1.0 : 0.85, function(compressed){
+    // Always keep as PNG to preserve transparency
+    compressImage(dataUrl, 600, 200, 1.0, function(compressed){
       _refreshSignPreview(compressed);
     });
   };
@@ -3583,10 +3653,8 @@ function signerImgChanged(input){
   var r = new FileReader();
   r.onload = function(ev){
     var dataUrl = ev.target.result;
-    var isPng = file.type === 'image/png' || dataUrl.indexOf('data:image/png') === 0;
-    // For PNG (transparent): keep as PNG, just resize if too large
-    // For JPG: compress with quality 0.85
-    compressImage(dataUrl, 600, 200, isPng ? 1.0 : 0.85, function(compressed){
+    // Always keep as PNG to preserve transparency
+    compressImage(dataUrl, 600, 200, 1.0, function(compressed){
       _refreshSignPreview(compressed);
     });
   };
@@ -3749,6 +3817,29 @@ function buildSigHtml(s, lineW, fontSize, forPrint){
     (s.name ? '<b style="font-size:'+fs+'">'+esc(s.name)+'</b><br>' : '')+
     '<span style="font-size:'+fs+'">'+esc(s.title||'')+'</span>';
 }
+'</span>';
 </script>
 </body>
-</html>
+</html
+// ── PORTAL DE CERTIFICADOS ────────────────────────────────────────────────────
+function saveCertificadoEmitido(ev, teacher, certHtml, code){
+  if(!teacher||!teacher.name) return;
+  var cert = {
+    id: code || ('cert-'+Date.now()+'-'+Math.random().toString(36).slice(2,7)),
+    cpf: (teacher.cpf||'').replace(/\D/g,''),
+    name: teacher.name,
+    eventId: ev.id,
+    eventName: ev.name||'',
+    hours: ev.hours||0,
+    date: ev.date||new Date().toLocaleDateString('pt-BR'),
+    code: code||'',
+    html: certHtml||''
+  };
+  SB.saveCertificado(cert).then(function(){
+    console.log('[Portal] Certificado salvo para '+teacher.name);
+  }).catch(function(err){
+    console.warn('[Portal] Erro ao salvar certificado:',err.message);
+  });
+}
+
+>
