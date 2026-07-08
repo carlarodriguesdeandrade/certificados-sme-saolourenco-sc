@@ -1650,8 +1650,8 @@ function renderEvents(){
       '<div style="display:flex;gap:6px;flex-wrap:wrap"><span class="bdg">\ud83d\udc65 '+(ev.participants||[]).length+' participante(s)</span>'+
       '<span class="bdg bdg-b">Reg. '+ev.startReg+'\u2013'+(ev.startReg+Math.max(0,(ev.participants||[]).length-1))+'</span></div></div>'+
       '<div style="display:flex;gap:6px;flex-shrink:0">'+
-      '<button class="btn bs btn-sm" onclick="openEvModal('+ev.id+')">✏️ Editar</button>'+
-      '<button class="btn bd btn-sm" onclick="delEv('+ev.id+')">\ud83d\uddd1</button></div></div></div>';
+      '<button class="btn bs btn-sm" data-ev-action="edit" data-ev-id="'+ev.id+'">✏️ Editar</button>'+
+      '<button class="btn bd btn-sm" data-ev-action="del" data-ev-id="'+ev.id+'">\ud83d\uddd1</button></div></div></div>';
   }).join('');
   var _evList=document.getElementById('ev-list');
   if(_evList){
