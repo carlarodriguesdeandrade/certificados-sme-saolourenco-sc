@@ -758,7 +758,10 @@ function doLogin(){
   currentUser=found;
   localStorage.setItem(SESSION_KEY,JSON.stringify({id:found.id,username:found.username,fullname:found.fullname,role:found.role,school:found.school}));
   document.getElementById('login-screen').style.display='none';
-  applyRoleUI();renderCurrent();
+  applyRoleUI();
+  setTab('events');
+  updateMeta();
+  bgConnect();
 }
 function showLoginErr(msg){var el=document.getElementById('login-err');el.textContent=msg;el.style.display='block';}
 function togglePassVis(){var i=document.getElementById('login-pass');i.type=i.type==='password'?'text':'password';}
@@ -1128,6 +1131,18 @@ function openStudentModal(id){
   document.getElementById('sf-class').value=s?s.classe||'':'';
   document.getElementById('stu-modal').style.display='flex';
 }
+
+function openStuModal(id){
+  editStuId=id||null;
+  var s=id?S.students.find(function(x){return String(x.id)===String(id);}):null;
+  document.getElementById('stu-modal-ttl').textContent=id?'Editar Aluno':'Novo Aluno';
+  document.getElementById('sf-name').value=s?s.name||'':'';
+  document.getElementById('sf-cpf').value=s?s.cpf||'':'';
+  document.getElementById('sf-classe').value=s?s.classe||'':'';
+  document.getElementById('sf-school').value=s?s.school||'':'';
+  document.getElementById('stu-modal').style.display='flex';
+}
+
 function closeStuModal(){document.getElementById('stu-modal').style.display='none';}
 
 function saveStudent(){
@@ -1713,7 +1728,7 @@ function saveEv(){
   }catch(e2){}
   apiCall({action:'saveEvent',data:formed}).catch(function(e){toast('Salvo localmente ('+e.message+')','i');});
 }
-function delEv(id){if(!confirm('Excluir?'))return;S.events=S.events.filter(function(e){return e.id!==id;});if(selEvId===id){selEvId=null;prevTchId=null;}renderEvents();updateMeta();toast('Excuída.','i');apiCall({action:'deleteEvent',id:id}).catch(function(){});}
+function delEv(id){if(!confirm('Excluir?'))return;S.events=S.events.filter(function(e){return e.id!==id;});if(selEvId===id){selEvId=null;prevTchId=null;}renderEvents();updateMeta();toast('Excuída.','i');apiCall({action:'delEvent',id:id}).catch(function(){});}
 
 // ── PROFESSORES ───────────────────────────────────────────────────────────────
 function renderTeachers(){
