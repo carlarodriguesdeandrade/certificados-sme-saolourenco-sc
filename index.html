@@ -2979,6 +2979,9 @@ function syncAllPresencaToTeachers(){
     return apiCall({action:'saveTeacher',data:t}).catch(function(){});
   });
   
+  // Also save the EVENT with its participants to Supabase (so other devices see them)
+  savePromises.push(apiCall({action:'setParticipants',eventId:selEv.id,participants:teacherIds}).catch(function(){}));
+  
   Promise.all(savePromises).then(function(){
     renderEvents();
     renderCertTab();
@@ -2986,6 +2989,7 @@ function syncAllPresencaToTeachers(){
     var msg='✅ '+teacherIds.length+' participante(s) sincronizado(s)!';
     if(newTeachers.length>0) msg+=' ('+newTeachers.length+' novo(s) cadastrado(s))';
     toast(msg);
+    console.log('[syncAll] Event participants saved to Supabase');
   });
 }
 
