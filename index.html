@@ -1994,7 +1994,8 @@ function buildP1(ev,t,idx){
   var cod=t?gerarCodigo(ev,t,idx):'XXXX-XXXX-XXX';
   var hasEnc=ev.encontros&&ev.encontros.length>0;
   var periodo=hasEnc?((ev.encontros[0].data||'')+' a '+(ev.encontros[ev.encontros.length-1].data||'')):ev.period||'';
-  var suffix=(L.periodSuffix||DEFAULT_LAYOUT.periodSuffix).replace('{cidade}',ev.city||'').replace('{horas}',String(ev.hours||0));
+  var _chInd=(t&&ev.encontros&&ev.encontros.length)?calcChProfessor(ev,t):(ev.hours||0);
+  var suffix=(L.periodSuffix||DEFAULT_LAYOUT.periodSuffix).replace('{cidade}',ev.city||'').replace('{horas}',String(_chInd));
   var qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=70x70&data='+encodeURIComponent('https://'+L.url+'?codigo='+cod);
   var evLogo=getEvLogo(ev);
   // LEFT logo (SME)
@@ -2213,7 +2214,7 @@ function _buildStaticContent(ev,isLand){
     var ev=ledEv;
     var hasEnc=ev.encontros&&ev.encontros.length>0;
     var periodo=hasEnc?(ev.encontros[0].data+' a '+ev.encontros[ev.encontros.length-1].data):ev.period||'';
-    var _chInd=(typeof parts!=='undefined'&&parts[0]&&parts[0].chInd)||ev.hours||0;
+    var _chInd=(ledParts&&ledParts[0]&&ledParts[0].chInd)||ev.hours||0;
     var suffix=(L.periodSuffix||'').replace('{cidade}',ev.city||'').replace('{horas}',String(_chInd));
     return '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:'+Math.round(5*fs)+'px">'+leftL+rightL+'</div>'+
       '<div style="text-align:center;font-family:Lora,Georgia,serif;font-size:'+Math.round(28*fs)+'pt;font-weight:400;margin-bottom:'+Math.round(3*fs)+'px">Certificado</div>'+
@@ -2319,6 +2320,7 @@ function printPortraitWithPositions(ev,alunos,positions){
       posEls+'</div>';
   }).join('');
   var css='*{margin:0;padding:0;box-sizing:border-box}@page{size:A4 landscape;margin:0}body{font-family:"EB Garamond",Georgia,serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pg{width:297mm;height:210mm;position:relative;overflow:hidden;page-break-after:always;background:#fff}.cnt{display:flex;flex-direction:column;align-items:stretch;text-align:center}.school{font-size:10pt;font-weight:700;color:'+L.primary+';letter-spacing:1px;margin-bottom:4mm;text-align:center;font-family:"DM Sans",sans-serif}.ttl{font-size:22pt;font-weight:700;margin-bottom:2mm;text-align:center}.sub{font-size:12pt;font-weight:700;color:'+L.primary+';margin-bottom:5mm;text-align:center;font-family:"DM Sans",sans-serif}.intro{font-size:11pt;margin-bottom:3mm;text-align:center;font-family:"DM Sans",sans-serif;line-height:1.5}.student{font-size:20pt;font-weight:700;color:'+L.nameColor+';margin-bottom:2mm;text-align:center}.body{font-size:10pt;line-height:1.7;max-width:80%;margin:0 auto 3mm;text-align:center;font-family:"DM Sans",sans-serif}.date{font-size:9pt;text-align:right;margin-bottom:3mm;font-family:"DM Sans",sans-serif;color:#555}';
+  css+=_imgCss; // shared images to avoid RangeError
   w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet"><style>'+css+'</style></head><body>'+pagesHtml+'<scr'+'ipt>window.onload=function(){var imgs=document.querySelectorAll("img");var loaded=0,total=imgs.length;if(total===0){setTimeout(window.print,500);return;}function tryPrint(){loaded++;if(loaded>=total)setTimeout(window.print,400);}Array.from(imgs).forEach(function(img){if(img.complete)tryPrint();else{img.onload=tryPrint;img.onerror=tryPrint;}});};<'+'/scr'+'ipt></body></html>');
   w.document.close();pedClose();
 }
@@ -2348,9 +2350,40 @@ function printLandscapeWithPositions(ev,parts,positions){
   var _allEncs=hasP2?ev.encontros:[];
   var _bgPrintData=getEvBgData(ev)||L.bgData||'';
   var _bgPrintCss=_bgPrintData?"background-image:url('"+_bgPrintData+"');background-size:cover;background-position:center;":'';
+  // Deduplicate repeated data: images so the print HTML stays under the string limit
+  var _imgMap={}, _imgCss='', _imgN=0;
+  positions.forEach(function(p){
+    var ms=p.html.match(/src="(data:image\/[^"]{200,})"/g);
+    if(!ms) return;
+    ms.forEach(function(m){
+      var url=m.slice(5,-1);
+      if(_imgMap[url]) return;
+      _imgN++;
+      var cls='pi'+_imgN;
+      _imgMap[url]=cls;
+      // 1x1 transparent gif keeps <img> semantics; real image comes from CSS
+      _imgCss+='img.'+cls+"{content:url('"+url+"')}";
+    });
+  });
+  var _blank='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+  if(_imgN){
+    positions=positions.map(function(p){
+      var h=p.html;
+      Object.keys(_imgMap).forEach(function(url){
+        var cls=_imgMap[url];
+        h=h.split('src="'+url+'"').join('class="'+cls+'" src="'+_blank+'"');
+      });
+      return Object.assign({},p,{html:h});
+    });
+    console.log('[PRINT] Deduplicated',_imgN,'images ->',Math.round(_imgCss.length/1024),'KB in CSS');
+  }
+
   var pagesHtml=parts.map(function(item,idx){
     var t=item.teacher||item;var nome=t.name||'';var cpf=t.cpf||'';
     var cod=gerarCodigo(ev,{name:nome,cpf:cpf},idx);
+    // Individual CH for this person
+    var _chPessoa=(ev.encontros&&ev.encontros.length)?calcChProfessor(ev,{name:nome,cpf:cpf}):(ev.hours||0);
+    var _chEvento=ev.hours||0;
     var qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=80x80&data='+encodeURIComponent('https://'+L.url+'?codigo='+cod);
     // Get first part's name to find and replace in HTML
     var firstPart=parts[0]&&(parts[0].teacher||parts[0]);
@@ -2362,6 +2395,12 @@ function printLandscapeWithPositions(ev,parts,positions){
       // Replace QR/code
       h=h.replace(/Cód: [^<]+/,'Cód: '+cod);
       h=h.replace(/src="[^"]*qrserver[^"]*"/,'src="'+qrUrl+'"');
+      // Replace total hours with this person's individual CH
+      if(_chPessoa!==_chEvento){
+        h=h.replace(new RegExp('total de '+_chEvento+' horas','g'),'total de '+_chPessoa+' horas');
+        h=h.replace(new RegExp('>'+_chEvento+' horas','g'),'>'+_chPessoa+' horas');
+        h=h.replace(new RegExp('\\b'+_chEvento+'h\\b','g'),_chPessoa+'h');
+      }
       // Replace name and CPF with current person's data
       if(nome&&firstName&&nome!==firstName){
         h=h.replace(new RegExp(firstName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g'),nome);
@@ -2453,15 +2492,15 @@ function _buildEditorCanvas(){
   canvas.style.height = H+'px';
   canvas.innerHTML = '';
 
-  // Background image (portrait certs only)
-  var _bg = isLand ? '' : getEvBgData(ev);
+  // Background image (both landscape and portrait)
+  var _bg = getEvBgData(ev) || L.bgData || '';
   if(_bg){
     var bgi = document.createElement('img');
     bgi.src = _bg;
     bgi.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none';
     canvas.appendChild(bgi);
 // no overlay - show border colors naturally
-  } else if(!isLand){
+  } else {
     canvas.style.background = '#fff';
   }
 
@@ -2554,7 +2593,7 @@ function _buildTextBlock(ev, isLand, nome, cpf, fs){
   if(isLand){
     var hasEnc=ev.encontros&&ev.encontros.length>0;
     var periodo=hasEnc?(ev.encontros[0].data+' a '+ev.encontros[ev.encontros.length-1].data):ev.period||'';
-    var _chInd=(typeof parts!=='undefined'&&parts[0]&&parts[0].chInd)||ev.hours||0;
+    var _chInd=(ledParts&&ledParts[0]&&ledParts[0].chInd)||ev.hours||0;
     var suffix=(L.periodSuffix||'').replace('{cidade}',ev.city||'').replace('{horas}',String(_chInd));
     return '<div style="text-align:center;font-family:Lora,Georgia,serif;font-size:'+Math.round(26*fs)+'pt;font-weight:400;margin-bottom:'+Math.round(2*fs)+'px">Certificado</div>'+
       '<div style="text-align:center;font-size:'+Math.round(10*fs)+'pt;line-height:1.85;color:#333">'+
@@ -3133,7 +3172,8 @@ function openMultiPrint(ev,parts){
   if(!w){toast('Permita pop-ups no navegador.','e');return;}
   var hasP2=ev.encontros&&ev.encontros.length>0;
   var periodo=hasP2?((ev.encontros[0].data||'')+' a '+(ev.encontros[ev.encontros.length-1].data||'')):ev.period||'';
-  var suffix=(L.periodSuffix||DEFAULT_LAYOUT.periodSuffix).replace('{cidade}',ev.city||'').replace('{horas}',String(ev.hours||0));
+  var _chInd=(t&&ev.encontros&&ev.encontros.length)?calcChProfessor(ev,t):(ev.hours||0);
+  var suffix=(L.periodSuffix||DEFAULT_LAYOUT.periodSuffix).replace('{cidade}',ev.city||'').replace('{horas}',String(_chInd));
   // p2rows is built per-person inside the map (see below)
   var _allEncs=hasP2?ev.encontros:[];
   var evLogo=getEvLogo(ev);
@@ -3447,7 +3487,8 @@ function signerImgChanged(input){
   r.onload = function(ev){
     var dataUrl = ev.target.result;
     // Always keep as PNG to preserve transparency
-    compressImage(dataUrl, 600, 200, 1.0, function(compressed){
+    compressImage(dataUrl, 400, 130, 1.0, function(compressed){
+      console.log('[SIG] Assinatura comprimida:',Math.round(compressed.length/1024),'KB');
       _refreshSignPreview(compressed);
     });
   };
@@ -3753,7 +3794,8 @@ function signerImgChanged(input){
   r.onload = function(ev){
     var dataUrl = ev.target.result;
     // Always keep as PNG to preserve transparency
-    compressImage(dataUrl, 600, 200, 1.0, function(compressed){
+    compressImage(dataUrl, 400, 130, 1.0, function(compressed){
+      console.log('[SIG] Assinatura comprimida:',Math.round(compressed.length/1024),'KB');
       _refreshSignPreview(compressed);
     });
   };
